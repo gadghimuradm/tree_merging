@@ -24,7 +24,9 @@ class MergeTreesAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            normalize_data(merge_trees(data))
+            data = merge_trees(data)
+            normalize_data(data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         return Response(data, status=status.HTTP_200_OK)
