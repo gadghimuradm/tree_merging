@@ -17,14 +17,14 @@ class MergeTreesAPIView(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         elif self.request.content_type == 'application/xml':
             try:
-                json_string = json.dumps(xmltodict.parse(self.request.body), indent=4)
-                data = json.loads(json_string, object_hook=_decode)["root"]
+                data = json.loads(json.dumps(xmltodict.parse(self.request.body), indent=4), object_hook=_decode)["root"]
             except ElementTree.ParseError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        data = merge_trees(data)
-        normalize_data(data)
-
+        try:
+            normalize_data(merge_trees(data))
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(data, status=status.HTTP_200_OK)

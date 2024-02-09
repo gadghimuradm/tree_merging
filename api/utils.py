@@ -69,6 +69,8 @@ def normalize_time_period(input_str):
     units = ["год", "месяц", "неделя", "день"]
 
     for match in matches:
+        if not match[0].isdigit():
+            continue
         value = int(match[0])
         unit = match[1]
 
@@ -92,10 +94,9 @@ def normalize_data(data):
     }
     if isinstance(data, dict):
         for key, value in data.items():
-            if key in normalizers.keys():
+            if key in normalizers:
                 data[key] = normalizers[key](value)
             elif isinstance(value, dict):
                 result = normalize_data(value)
                 if result is not None:
                     return result
-    return None
